@@ -3,23 +3,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NUM_THREADS 4
 #define MAX_LINES 20000000
 #define MAX_LEN 1024
 
 char *lines[MAX_LINES];
 int results[MAX_LINES];
 int total_lines = 0;
+int num_threads;
 
 void *count_array(void *arg) {
     // Thread ID passed from main()
     int thread_id = (int)(long)arg;
     // Divide work among threads
-    int chunk = total_lines / NUM_THREADS;
+    int chunk = total_lines / num_threads;
     // Compute assigned range for thread
     int startPos = thread_id * chunk;
     // Last one gets leftover lines
-    int endPos = (thread_id == NUM_THREADS - 1) ? total_lines : startPos + chunk;
+    int endPos = (thread_id == num_threads - 1) ? total_lines : startPos + chunk;
 
     for (int i = startPos; i < endPos; i++) {
         // Track maximum ASCII value
@@ -47,7 +47,15 @@ void print_results() {
     }
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("Usage: %s <num_threads>\n", argv[0]);
+        return 1;
+    }
+    if (sscanf(argv[1], "%d", &num_threads) != 1 || num_threads <= 0) {
+        printf("Invalid number of threads.\n");
+        return 1;
+    }
     // Open file
     FILE *fp = fopen("/homes/eyv/cis520/wiki_dump.txt", "r");
     // Stack buffer for reading lines
@@ -60,19 +68,20 @@ int main() {
 
     fclose(fp);
     // Thread handles
-    pthread_t threads[NUM_THREADS];
+    pthread_t threads[num_threads];
     // Create threads
-    for (int i = 0; i < NUM_THREADS; i++) {
+    for (int i = 0; i < num_threads; i++) {
         if (pthread_create(&threads[i], NULL, count_array, (void *)(long)i)) {
             printf("Error creating thread\n");
             return 1;
         }
     }
     // Join threads
-    for (int i = 0; i < NUM_THREADS; i++) {
+    for (int i = 0; i < num_threads; i++) {
         pthread_join(threads[i], NULL);
     }
     // Output results
-    print_results();
+    // print_results();
     return 0;
 }
+

@@ -20,4 +20,4 @@ echo "Mem per CPU: $SLURM_MEM_PER_CPU"
 echo "=============================="
 
 # Run with timing
-/usr/bin/time -v mpirun -np $SLURM_NTASKS ./mpi_maximum > /dev/null
+/usr/bin/time -v srun ./mpi_maximum > /dev/null

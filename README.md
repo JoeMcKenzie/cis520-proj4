@@ -2,14 +2,7 @@ How to compile, run, and schedule our code:
 
 Compiling -
 
-  PTHREADS:
-  gcc -o pthread_maximum pthread_maximum.c -pthread
-
-  MPI:
-  mpicc -o mpi_maximum mpi_maximum.c
-
-  OPENMP:
-  gcc -o openmp_maximum openmp_maximum.c -fopenmp
+  Navigate to the directory, use make to compile
 
 Running -
 
